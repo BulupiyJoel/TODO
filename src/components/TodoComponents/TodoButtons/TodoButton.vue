@@ -13,5 +13,7 @@ defineProps({
 
 </script>
 <template>
-      <button :class=className>{{label}}</button>
+      <button :class=className>
+            <slot></slot> {{ label }}
+      </button>
 </template>

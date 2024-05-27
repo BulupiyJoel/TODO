@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import TodoForm from '@/components/TodoComponents/TodoDatas/TodoForm.vue'
+import TodoTable from '@/components/TodoComponents/TodoDatas/TodoTable.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,7 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: TodoForm
+      component: TodoTable
     },
     {
       path: '/about',
