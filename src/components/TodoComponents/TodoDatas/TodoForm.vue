@@ -1,21 +1,40 @@
-<script setup>
+<script>
 import TodoTable from "./TodoTable.vue";
 
-let todo = defineModel()
-let todos = [];
-function addTodo() {
-      todos.push(todo)
-      let stored = todos
-      localStorage.setItem("todos", stored)
+export default {
+      components: {
+            TodoTable
+      },
+      data() {
+            return {
+                  todo: '', // Assuming defineModel was meant to be a reactive property for the todo input
+                  todos: []
+            };
+      },
+      methods: {
+            addTodo() {
+                  this.todos.push(this.todo);
+                  localStorage.setItem("todos", JSON.stringify(this.todos));
+                  this.todo = ''; // Clear the input after adding a todo
+            },
+            async getTodos() {
+                  try {
+                        const storedData = localStorage.getItem("todos");
+                        if (storedData) {
+                              this.todos = JSON.parse(storedData);
+                        } else {
+                              this.todos = [];
+                        }
+                  } catch (error) {
+                        console.error("Failed to fetch todos:", error);
+                        this.todos = [];
+                  }
+            }
+      },
+      mounted() {
+            this.getTodos();
+      }
 }
-let getTodos = () => {
-      return localStorage.getItem("todos")
-}
-
-// function deleteTodo() {
-//       localStorage.removeItem("todos")
-// }
-
 </script>
 
 <template>
@@ -24,15 +43,14 @@ let getTodos = () => {
                   <div class="card-body">
                         <h3 class="card-title lead text-primary fw-bold">Todo Form</h3>
                         <div class="">
-                              {{ todo + " | " + todos }}
-                              <form class="v-stack" @submit.prevent>
-                                    <input type="text" name="" id="" class="form-control" placeholder="Write here..."
-                                          v-model="todo">
-                                    <button class="btn btn-primary my-2" @click="addTodo">Create</button>
+                              <form class="v-stack" @submit.prevent="addTodo">
+                                    <input type="text" class="form-control" placeholder="Write here..."
+                                          v-model="todo" />
+                                    <button class="btn btn-primary my-2" type="submit">Create</button>
                               </form>
                         </div>
                         <div class="">
-                              <TodoTable :todos="getTodos()"/>
+                              <TodoTable :todos="todos" />
                         </div>
                   </div>
             </div>

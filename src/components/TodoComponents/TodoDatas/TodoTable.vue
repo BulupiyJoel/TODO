@@ -16,8 +16,8 @@ defineProps({
                   </tr>
             </thead>
             <tbody>
-                  <tr>
-                        <th>{{ todos }}</th>
+                  <tr v-for="todo in todos" :key="todo">
+                        <th>{{ todo }}</th>
                         <td>
                               <TodoButton className="btn btn-primary" label="Edit"/>
                               <TodoButton className="btn btn-danger" label="Delete"/>
