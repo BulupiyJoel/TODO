@@ -3,12 +3,13 @@ import { onMounted, ref } from 'vue'
 import TodoButton from "../TodoButtons/TodoButton.vue"
 import TodoIcon from "../TodoButtons/TodoIcon.vue"
 
-
 let todos = ref([]); // Initialize as an empty array for storing todos
 let emptyTodosMessage = "There is no todo in the database";
 
 // Values
 let title = ref(''); // For the new todo input
+let selectedTodo = ref(null); // For storing the selected todo
+
 // Methods
 const addTodo = () => {
       // Create a new todo item with a unique id and the title from input
@@ -41,13 +42,18 @@ const getTodos = async () => {
 };
 
 const editTodo = (todo) => {
-      todos.value.id
-      title.value = todo.title
-}
+      selectedTodo.value = todo; // Store the selected todo
+      title.value = todo.title; // Set the input value to the selected todo's title
+};
 
-const updateTodo = (todo) => {
-      todo.title = title.value
-}
+const updateTodo = () => {
+      if (selectedTodo.value) {
+            selectedTodo.value.title = title.value; // Update the selected todo's title
+            selectedTodo.value = null; // Reset the selected todo
+            title.value = ""; // Clear the input
+            localStorage.setItem("todos", JSON.stringify(todos.value)); // Update localStorage
+      }
+};
 
 onMounted(() => {
       getTodos();
@@ -63,7 +69,7 @@ onMounted(() => {
                               <h3 class="card-title lead text-primary fw-bold">Todo Form</h3>
                               <div class="">
                                     <!--Creation-Form-->
-                                    <form class="v-stack" @submit.prevent="addTodo" v-if="!editTodo">
+                                    <form class="v-stack" @submit.prevent="addTodo">
                                           <input type="text" class="form-control" placeholder="Write here..."
                                                 v-model="title" />
                                           <div class="">
@@ -73,15 +79,7 @@ onMounted(() => {
                                           </div>
                                     </form>
                                     <!--Edition-Form-->
-                                    <form class="v-stack" @submit.prevent="updateTodo" v-else>
-                                          <input type="text" class="form-control" placeholder="Write here..."
-                                                v-model="title" />
-                                          <div class="">
-                                                <button class="btn btn-primary my-2 w-100" type="submit">
-                                                      Modifier <i class="bi bi-pen"></i>
-                                                </button>
-                                          </div>
-                                    </form>
+
                               </div>
                         </div>
                   </div>
@@ -120,8 +118,9 @@ onMounted(() => {
                                                       </form>
                                                 </div>
                                                 <div class="col-4">
-                                                      <TodoButton className="btn btn-danger" label="Edit">
-                                                            <TodoIcon iconClass="bi bi-trash" />
+                                                      <TodoButton className="btn btn-success" label="Update"
+                                                            @click="updateTodo">
+                                                            <TodoIcon iconClass="bi bi-check2" />
                                                       </TodoButton>
                                                 </div>
                                           </div>
